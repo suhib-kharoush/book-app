@@ -1,72 +1,69 @@
 'use strict';
 
-// Application Dependencies
+const { render } = require('ejs');
 const express = require('express');
 const superagent = require('superagent');
-// require('dotenv').config();
 
-// Application Setup
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Application Middleware
-app.use(express.urlencoded({ extended: true }));
+// server.use(express.static('./public'));
+
 app.use(express.static('./public'));
-// Set the view engine for server-side templating
+
+require('dotenv').config()
+app.use(express.urlencoded({ extended: true }));
+
 app.set('view engine', 'ejs');
 
-// API Routes
-// Renders the home page
 app.get('/', renderHomePage);
 
-// Renders the search form
-app.get('/searches/show', showForm);
+app.get('/searches/new', showForm);
 
-// Creates a new search to the Google Books API
 app.post('/searches', createSearch);
 
-// Catch-all
-app.get('*', (request, response) => response.status(404).send('This route does not exist'));
+app.get('*', (req, res) => res.status(404).send('This route does not exist'));
 
-app.listen(PORT, () => console.log(`Listening on port: ${PORT}`));
+app.listen(PORT, () => console.log(`listen on PORT ${PORT}`));
 
-// Constructor
 function Book(info) {
-    const placeholderImage = 'https://i.imgur.com/J5LVHEL.jpg';
-
+    // const placeHolderImage = 'https://i.imgur.com/J5LVHEL.jpg';
     this.title = info.title || 'No title available';
+    this.author = info.authors;
+    // this.img = info.imageLinks ? info.imageLinks.thumbnail : 'https://i.imgur.com/J5LVHEL.jpg';
 }
 
-// Note that .ejs file extension is not required
 
-function renderHomePage(request, response) {
-    response.render('pages/index');
+
+
+
+
+function renderHomePage(req, res) {
+    res.render('pages/index')
 }
 
-function showForm(request, response) {
-    response.render('pages/searches/show.ejs');
+function showForm(req, res) {
+    res.render('pages/searches/new');
 }
 
-// No API key required
-// Console.log request.body and request.body.search
-function createSearch(request, response) {
-    let url = 'https://www.googleapis.com/books/v1/volumes';
-    // add the search query to the URL
-    console.log(request.body);
-    const searchBy = request.body.searchBy;
-    const searchValue = request.body.search;
+function createSearch(req, res) {
+
+
+    const searchBy = req.body.searchBy;
+    const searchValue = req.body.search;
+    let url = `https://www.googleapis.com/books/v1/volumes?q=+in${searchBy}:${searchValue}`;
     const queryObj = {};
     if (searchBy === 'title') {
         queryObj['q'] = `+intitle:${searchValue}`;
-
     } else if (searchBy === 'author') {
         queryObj['q'] = `+inauthor:${searchValue}`;
     }
-    // console.log(queryObj);
-    // send the URL to the servers API
-    superagent.get(url).query(queryObj).then(apiResponse => {
+
+    superagent.get(url).then(apiResponse => {
         return apiResponse.body.items.map(bookResult => new Book(bookResult.volumeInfo))
+
     }).then(results => {
-        response.render('pages/show', { searchResults: results })
-    });
+        res.render('pages/show', { searchResults: results })
+        console.log(results);
+    })
 }
