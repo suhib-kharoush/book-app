@@ -1,14 +1,16 @@
 'use strict';
 
-const { render } = require('ejs');
+// const { render } = require('ejs');
 const express = require('express');
 const superagent = require('superagent');
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // server.use(express.static('./public'));
 
+app.use(cors());
 app.use(express.static('./public'));
 
 require('dotenv').config()
@@ -29,8 +31,9 @@ app.listen(PORT, () => console.log(`listen on PORT ${PORT}`));
 function Book(info) {
     // const placeHolderImage = 'https://i.imgur.com/J5LVHEL.jpg';
     this.title = info.title || 'No title available';
-    this.author = info.authors;
-    // this.img = info.imageLinks ? info.imageLinks.thumbnail : 'https://i.imgur.com/J5LVHEL.jpg';
+    this.author = info.authors ? info.authors[0] : 'no authors available'
+    this.description = info.description ? info.description : 'no description available'
+    this.img = info.imageLinks ? info.imageLinks.thumbnail : 'https://i.imgur.com/J5LVHEL.jpg';
 }
 
 
@@ -54,9 +57,9 @@ function createSearch(req, res) {
     let url = `https://www.googleapis.com/books/v1/volumes?q=+in${searchBy}:${searchValue}`;
     const queryObj = {};
     if (searchBy === 'title') {
-        queryObj['q'] = `+intitle:${searchValue}`;
+        queryObj['q'] = `intitle:${searchValue}`;
     } else if (searchBy === 'author') {
-        queryObj['q'] = `+inauthor:${searchValue}`;
+        queryObj['q'] = `inauthor:${searchValue}`;
     }
 
     superagent.get(url).then(apiResponse => {
