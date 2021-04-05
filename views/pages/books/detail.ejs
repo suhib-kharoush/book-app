@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('../layout/head.ejs') %>
+</head>
+
+<body>
+    <header>
+        <%- include('../layout/nav.ejs') %>
+    </header>
+
+    <main>
+        <section class="task-view container">
+            <h1>got to details view</h1>
+            <ul id="task-list">
+                <% result.forEach(task=> { %>
+                    <h4>
+                        Name:
+                        <%= task.id %>
+                    </h4>
+                    <h5>
+                        <%= task.author %>
+                    </h5>
+                    <span>
+            <%= task.isbn %>
+          </span>
+                    <p>
+                        <%= task.image_url %>
+                    </p>
+                    <p>
+                        <%= task.description %>
+                    </p>
+                    <% }) %>
+            </ul>
+        </section>
+    </main>
+</body>
+
+</html>
