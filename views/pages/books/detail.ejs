@@ -35,9 +35,38 @@
                         Description:
                         <%= book.description %>
                     </p>
-                    <% }) %>
+
             </ul>
         </section>
+        <div>
+            <form action="/deleteBook/<%= book.id %>?_method=delete" method="POST">
+                <input type="hidden" value="<%= book.id%>">
+                <input type="submit" value="Delete book">
+
+            </form>
+
+
+            <form action="/books/update/<%= book.id%>?_method=PUT" method="POST">
+                <fieldset>
+
+                    <legend>Update Book</legend>
+                    <input type="text" name="auther" value="<%=book.title%>">
+                    <br>
+                    <input type="text" name="title" value="book.title">
+                    <br>
+                    <input type="text" name="isbn" value="<%= book.isbn%>">
+                    <br>
+                    <input type="text" name="img" value="<%=book.image_url %>">
+                    <br>
+                    <input type="text" name="description" value="<%= book.description%>">
+                    <br>
+                    <input type="submit" name="" id="" value="edit">
+
+
+                </fieldset>
+            </form>
+        </div>
+        <% }) %>
     </main>
 </body>
 

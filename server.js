@@ -6,6 +6,8 @@ const express = require('express');
 const superagent = require('superagent');
 const cors = require('cors');
 const pg = require('pg');
+const methodOverRide = require('method-override');
+const { del } = require('superagent');
 
 const app = express();
 const client = new pg.Client(process.env.DATABASE_URL);
@@ -15,15 +17,20 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.static('./public'));
 app.use(express.urlencoded({ extended: true }));
-
 app.set('view engine', 'ejs');
+app.use(methodOverRide("_method"));
+
 
 app.get('/', allBooks);
-app.post('/books', addTask);
-app.get('/books/:Id', getSingleTask);
+app.post('/books', addBook);
+app.get('/books/:Id', getBook);
 app.get('/searches/new', showBooks);
-app.post('/searches', createSearch);
+app.post('/searches', bookSearch);
 app.get('*', (req, res) => res.status(404).send('This route does not exist'));
+
+
+app.put('/books/update/:id', updateBook);
+app.delete('/books/delete/:id', deleteBook);
 
 // app.listen(PORT, () => console.log(`listen on PORT ${PORT}`));
 
@@ -48,7 +55,7 @@ function showBooks(req, res) {
     res.render('pages/searches/new');
 }
 
-function createSearch(req, res) {
+function bookSearch(req, res) {
 
 
     const searchBy = req.body.searchBy;
@@ -85,7 +92,7 @@ function allBooks(req, res) {
 }
 
 
-function getSingleTask(req, res) {
+function getBook(req, res) {
     const id = req.params.Id;
     let SQL = `SELECT * FROM library WHERE id=$1;`;
     let safeValues = [id];
@@ -98,7 +105,7 @@ function getSingleTask(req, res) {
 }
 
 
-function addTask(req, res) {
+function addBook(req, res) {
     const sqlQuery = `INSERT INTO library (auther, title, isbn, image_url, description) VALUES($1, $2, $3,$4,$5);`;
     const value = req.body;
     let safeValues = [value.author, value.title, value.isbn, value.image_url, value.description];
@@ -111,6 +118,32 @@ function addTask(req, res) {
         })
     })
 }
+
+
+
+function updateBook(req, res) {
+    const id = req.params.id;
+    const value = req.body;
+    let safeValues = [value.auther, value.title, value.isbn, value.image_url, value.description];
+
+    const updateLibrary = 'UPDATE library SET auther=$1, title=$2, isbn=$3, image_url=$4 description=$5 WHERE id=$6;';
+
+    client.query(updateLibrary, safeValues).then(results => {
+            res.redirect(`/books/${id}`);
+        })
+        // .catch(error, res);
+}
+
+
+function deleteBook(req, res) {
+    const id = req.params.id;
+    const idValues = [id];
+    const deleteQuery = 'DELETE FROM library WHERE id=$1';
+    client.query(deleteQuery, idValues).then(() => {
+        res.redirect('/');
+    }).catch(error => handleError(error, res));
+}
+
 
 
 client.connect().then(() => {
