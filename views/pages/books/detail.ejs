@@ -2,34 +2,38 @@
 <html>
 
 <head>
-    <%- include('../layout/head.ejs') %>
+
 </head>
 
 <body>
     <header>
-        <%- include('../layout/nav.ejs') %>
     </header>
 
     <main>
-        <section class="task-view container">
-            <h1>got to details view</h1>
-            <ul id="task-list">
-                <% result.forEach(task=> { %>
+        <section class="book-view container">
+            <h1>Selected Books</h1>
+            <ul id="book-list">
+                <% result.forEach(book=> { %>
                     <h4>
                         Name:
-                        <%= task.id %>
+                        <%= book.title %>
                     </h4>
                     <h5>
-                        <%= task.author %>
+                        Author:
+                        <%= book.auther %>
                     </h5>
+                    <br>
                     <span>
-            <%= task.isbn %>
+                    ISBN:
+            <%= book.isbn %>
           </span>
+                    <br>
+                    <img src="<%= book.image_url %>" alt="">
+                    <br>
+
                     <p>
-                        <%= task.image_url %>
-                    </p>
-                    <p>
-                        <%= task.description %>
+                        Description:
+                        <%= book.description %>
                     </p>
                     <% }) %>
             </ul>
