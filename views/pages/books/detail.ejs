@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+</head>
+
+<body>
+    <header>
+    </header>
+
+    <main>
+        <section class="book-view container">
+            <h1>Selected Books</h1>
+            <ul id="book-list">
+                <% result.forEach(book=> { %>
+                    <h4>
+                        Name:
+                        <%= book.title %>
+                    </h4>
+                    <h5>
+                        Author:
+                        <%= book.auther %>
+                    </h5>
+                    <br>
+                    <span>
+                    ISBN:
+            <%= book.isbn %>
+          </span>
+                    <br>
+                    <img src="<%= book.image_url %>" alt="">
+                    <br>
+
+                    <p>
+                        Description:
+                        <%= book.description %>
+                    </p>
+                    <% }) %>
+            </ul>
+        </section>
+    </main>
+</body>
+
+</html>

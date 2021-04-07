@@ -5,27 +5,40 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link rel="stylesheet" href="../styles/base.css">
-    <link rel="stylesheet" href="../styles.reset.css"> -->
+
 </head>
 
 <body>
     <main>
-        <div class="container1">Best Books
-            <div class="drop">
-                <button onclick="myFunction()" class="dropbtn">Dropdown</button>
-                <div id="myList" class="drop-content">
-                    <a href="/">Home</a>
-                    <a href="/searches">Search the Google Books Api</a>
-                </div>
-            </div>
-        </div>
-        <div class="container2">
-            0 saved Books
-        </div>
-        <div class="container3">
 
-        </div>
+
+
+        <section>
+            <ul>
+                <% if(results.length) {%>
+                    <% results.forEach(data=>{%>
+                        <li>
+                            <h4>
+                                <%= data.title %>
+                            </h4>
+                            <p>
+                                <%= data.contact %>
+                            </p>
+                            <p>
+                                <%= data.status %>
+                            </p>
+                            <a href="/books/<%= data.id%>" target="_blank" rel="no opener no reference">view Book details</a>
+                        </li>
+                        <%}); %>
+                            <% } else {%>
+                                <p>data not available</p>
+                                <%}%>
+            </ul>
+        </section>
+
+
+
+
         <div class="container4"></div>
     </main>
 </body>
